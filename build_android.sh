@@ -1,4 +1,6 @@
 #!/bin/bash
+NDK=~/Library/Android/sdk/ndk-bundle
+ANDROID_NDK=$NDK
 
 if [ -z "$ANDROID_NDK" ]; then
 	echo "You must define ANDROID_NDK before starting."
@@ -16,28 +18,39 @@ elif [ $OS == 'Darwin' ]; then
 	export HOST_SYSTEM=darwin-$HOST_ARCH
 fi
 
-NDK=/Users/michael/Library/Android/sdk/ndk-bundle
 
 SOURCE=`pwd`
 PREFIX=$SOURCE/build/android
-TOOLCHAIN=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
-SYSROOT=$NDK/platforms/android-14/arch-arm
-CROSS_PREFIX=${TOOLCHAIN}/bin/arm-linux-androideabi-
-EXTRA_CFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=neon -D__ARM_ARCH_7__ -D__ARM_ARCH_7A__"
-EXTRA_LDFLAGS="-nostdlib"
+
+#armv7a
+# TOOLCHAIN=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
+# SYSROOT=$NDK/platforms/android-14/arch-arm
+# CROSS_PREFIX=${TOOLCHAIN}/bin/arm-linux-androideabi-
+# EXTRA_CFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=neon -D__ARM_ARCH_7__ -D__ARM_ARCH_7A__"
+# EXTRA_LDFLAGS="-nostdlib"
+# HOST=arm-linux
+
+#arm64
+TOOLCHAIN=$NDK/toolchains/aarch64-linux-android-4.9/prebuilt/darwin-x86_64
+SYSROOT=$NDK/platforms/android-21/arch-arm64/
+CROSS_PREFIX=${TOOLCHAIN}/bin/aarch64-linux-android-
+EXTRA_CFLAGS=""
+EXTRA_LDFLAGS=""
+HOST=aarch64-linux
 
 ./configure  --prefix=$PREFIX \
 	--cross-prefix=$CROSS_PREFIX \
 	--extra-cflags="$EXTRA_CFLAGS" \
 	--extra-ldflags="$EXTRA_LDFLAGS" \
 	--enable-pic \
-	--enable-shared \
 	--enable-static \
 	--enable-strip \
 	--disable-cli \
-	--host=arm-linux \
+	--host=$HOST \
 	--sysroot=$SYSROOT
 
 make clean
 make STRIP= -j4 install || exit 1
+
+say "Your building has been completed!"
 
