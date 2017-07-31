@@ -16,12 +16,13 @@ elif [ $OS == 'Darwin' ]; then
 	export HOST_SYSTEM=darwin-$HOST_ARCH
 fi
 
+NDK=/Users/michael/Library/Android/sdk/ndk-bundle
 
 SOURCE=`pwd`
 PREFIX=$SOURCE/build/android
-
-SYSROOT=$ANDROID_NDK/platforms/android-14/arch-arm
-CROSS_PREFIX=$ANDROID_NDK/toolchains/arm-linux-androideabi-4.8/prebuilt/$HOST_SYSTEM/bin/arm-linux-androideabi-
+TOOLCHAIN=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
+SYSROOT=$NDK/platforms/android-14/arch-arm
+CROSS_PREFIX=${TOOLCHAIN}/bin/arm-linux-androideabi-
 EXTRA_CFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=neon -D__ARM_ARCH_7__ -D__ARM_ARCH_7A__"
 EXTRA_LDFLAGS="-nostdlib"
 
@@ -30,6 +31,7 @@ EXTRA_LDFLAGS="-nostdlib"
 	--extra-cflags="$EXTRA_CFLAGS" \
 	--extra-ldflags="$EXTRA_LDFLAGS" \
 	--enable-pic \
+	--enable-shared \
 	--enable-static \
 	--enable-strip \
 	--disable-cli \
